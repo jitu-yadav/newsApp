@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.stupid.newsapp.domain.model.NewsArticle
 import com.stupid.newsapp.presentation.ui.feed.NewsCardItem
 
@@ -36,6 +37,8 @@ fun BookmarksScreen(
     onArticleClick: (NewsArticle) -> Unit,
 ) {
     val bookmarks by viewModel.bookmarks.collectAsState()
+    val bookmarkedIds by viewModel.bookmarkedIds.collectAsStateWithLifecycle()
+
 
     Scaffold(
         topBar = {
@@ -57,10 +60,16 @@ fun BookmarksScreen(
                     .padding(padding)
             ) {
                 items(bookmarks) { article ->
+                    val isBookmarked = bookmarkedIds.contains(article.id)
+
                     NewsCardItem(
                         newsArticle = article,
+                        isBookmarked = isBookmarked,
                         onClick = { onArticleClick(article) },
-                        onBookmarkClick = { viewModel.toggleBookmark(article) }
+                        onBookmarkClick = {
+
+                            viewModel.toggleBookmark(article)
+                         }
                     )
                 }
             }

@@ -21,25 +21,32 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.stupid.newsapp.domain.model.NewsArticle
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsDetailScreen(
+    articleDetail: NewsArticle,
     viewModel: NewsDetailViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val articleDetail = viewModel.newsArticle ?: return
+
+    val bookmarkedIds = viewModel.bookmarkedIds.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(articleDetail.title ?: "Article") },
+                title = { Text(articleDetail.title ?: "Article",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, null)
@@ -59,10 +66,15 @@ fun NewsDetailScreen(
 
                     // Bookmark Toggle
                     IconButton(onClick = {
-                        articleDetail.let { viewModel.toggleBookmark(it) }
+                        articleDetail.let {
+                            val article = it.apply {
+                                isBookmarked = bookmarkedIds.value.contains(it.id)
+                            }
+                            viewModel.toggleBookmark(article)
+                        }
                     }) {
                         Icon(
-                            if (articleDetail.isBookmarked)
+                            if (bookmarkedIds.value.contains(articleDetail.id))
                                 Icons.Default.Bookmark
                             else Icons.Default.BookmarkBorder,
                             contentDescription = null
@@ -80,7 +92,7 @@ fun NewsDetailScreen(
             )
         }
     ) { padding ->
-        if (viewModel.showNativeDetail) {
+        /*if (articleDetail.content != null) {
             // Option A: Native HTML content from API
             ArticleNativeContent(
                 html = articleDetail.content,
@@ -88,7 +100,7 @@ fun NewsDetailScreen(
                     .padding(padding)
                     .fillMaxSize()
             )
-        } else {
+        } else {*/
             // Option B: WebView
             articleDetail.url?.let {
                 ArticleWebView(
@@ -98,7 +110,7 @@ fun NewsDetailScreen(
                         .fillMaxSize()
                 )
             }
-        }
+        //}
     }
 }
 

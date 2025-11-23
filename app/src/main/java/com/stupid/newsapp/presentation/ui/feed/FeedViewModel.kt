@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.stupid.newsapp.domain.model.NewsArticle
+import com.stupid.newsapp.domain.usecase.GetBookmarkedIdsUseCase
 import com.stupid.newsapp.domain.usecase.GetNewsArticleUseCase
 import com.stupid.newsapp.domain.usecase.ToggleBookmarkUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     getNewsArticleUseCase: GetNewsArticleUseCase,
-    private val toggleBookmarkUseCase: ToggleBookmarkUseCase
+    private val toggleBookmarkUseCase: ToggleBookmarkUseCase,
+    private val getBookmarkedIdsUseCase: GetBookmarkedIdsUseCase
 ) : ViewModel() {
     val news = getNewsArticleUseCase()
         .cachedIn(viewModelScope)
@@ -24,6 +26,14 @@ class FeedViewModel @Inject constructor(
             viewModelScope,
             SharingStarted.Lazily,
             PagingData.empty()
+        )
+
+    // Expose the live stream of bookmarked IDs
+    val bookmarkedIds = getBookmarkedIdsUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptySet()
         )
 
     fun toggleBookmark(newsArticle: NewsArticle) {

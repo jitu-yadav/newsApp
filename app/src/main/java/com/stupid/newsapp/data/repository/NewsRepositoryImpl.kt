@@ -55,4 +55,8 @@ class NewsRepositoryImpl @Inject constructor(
     override fun getArticleDetailsById(id: String): Flow<NewsEntity> {
         return db.newsDao().getNewsArticle(id)
     }
+
+    override fun getBookmarksIds(): Flow<List<String>> {
+        return db.newsDao().getBookmarksIds()
+    }
 }

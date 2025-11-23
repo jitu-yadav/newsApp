@@ -37,6 +37,7 @@ import com.stupid.newsapp.domain.model.NewsArticle
 @Composable
 fun NewsCardItem(
     newsArticle: NewsArticle,
+    isBookmarked: Boolean,
     onClick: (newsArticle: NewsArticle) -> Unit,
     onBookmarkClick: (newsArticle: NewsArticle) -> Unit
 ) {
@@ -73,7 +74,7 @@ fun NewsCardItem(
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Icon(
-                            imageVector = if (newsArticle.isBookmarked)
+                            imageVector = if (isBookmarked)
                                 Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                             contentDescription = "Bookmark",
                             tint = Color.White

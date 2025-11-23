@@ -18,4 +18,6 @@ interface NewsRepository {
     fun getBookmarkedArticles(): Flow<List<NewsArticle>>
 
     fun getArticleDetailsById(id:String): Flow<NewsEntity>
+
+    fun getBookmarksIds(): Flow<List<String>>
 }

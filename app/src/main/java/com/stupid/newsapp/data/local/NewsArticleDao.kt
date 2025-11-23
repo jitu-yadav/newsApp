@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Dao
 interface NewsArticleDao {
@@ -24,4 +25,11 @@ interface NewsArticleDao {
 
     @Query("SELECT * FROM bookmarks_articles where id = :id")
     fun getNewsArticle(id: String): Flow<NewsEntity>
+
+    @Query("SELECT id FROM bookmarks_articles")
+    fun getBookmarksIds(): Flow<List<String>> {
+        return getNewsArticles().map { articles ->
+            articles.map { it.id }
+        }
+    }
 }

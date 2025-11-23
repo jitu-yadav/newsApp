@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.stupid.newsapp.common.Utils
+import com.stupid.newsapp.domain.model.NewsArticle
 import com.stupid.newsapp.presentation.ui.bookmark.BookmarksScreen
 import com.stupid.newsapp.presentation.ui.feed.FeedScreen
 import com.stupid.newsapp.presentation.ui.newsdetails.NewsDetailScreen
@@ -26,9 +27,7 @@ fun NewsNavHost(
         composable(NavRoutes.FEED) {
             FeedScreen(
                 onNewArticleClick = {
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set(Utils.ARTICLE, it)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(Utils.ARTICLE, it)
                     navController.navigate(NavRoutes.DETAILS)
                 },
             )
@@ -37,9 +36,7 @@ fun NewsNavHost(
         composable(NavRoutes.SEARCH) {
             SearchScreen(
                 onArticleClick = {
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set(Utils.ARTICLE, it)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(Utils.ARTICLE, it)
                     navController.navigate(NavRoutes.DETAILS)
                 })
         }
@@ -47,9 +44,7 @@ fun NewsNavHost(
         composable(NavRoutes.BOOKMARKS) {
             BookmarksScreen(
                 onArticleClick = {
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set(Utils.ARTICLE, it)
+                    navController.currentBackStackEntry?.savedStateHandle?.set(Utils.ARTICLE, it)
                     navController.navigate(NavRoutes.DETAILS)
                 }
             )
@@ -57,9 +52,16 @@ fun NewsNavHost(
 
         // Add the Details Route
         composable(route = NavRoutes.DETAILS) {
-            NewsDetailScreen(
-                onBack = { navController.popBackStack() }
-            )
+                // Retrieve the Article object from the PREVIOUS back stack entry (the one that sent us here)
+                // Note: You might need to cast the result if the generic inference fails
+                val article = navController.previousBackStackEntry?.savedStateHandle?.get<NewsArticle>(Utils.ARTICLE)
+
+            article?.let { articleDetail ->
+                NewsDetailScreen(
+                    articleDetail,
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }

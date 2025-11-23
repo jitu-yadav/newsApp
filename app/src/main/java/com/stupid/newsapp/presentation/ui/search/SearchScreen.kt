@@ -17,11 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.stupid.newsapp.domain.model.NewsArticle
-import com.stupid.newsapp.presentation.ui.feed.ErrorItem
-import com.stupid.newsapp.presentation.ui.feed.LoadingItem
+import com.stupid.newsapp.presentation.ui.common.ErrorItem
+import com.stupid.newsapp.presentation.ui.common.LoadingItem
 import com.stupid.newsapp.presentation.ui.feed.NewsCardItem
 
 
@@ -35,6 +36,8 @@ fun SearchScreen(
     val results = viewModel.results.collectAsLazyPagingItems()
 
     val isRefreshing = results.loadState.refresh is LoadState.Loading
+
+    val bookmarkedIds = viewModel.bookmarkedIds.collectAsStateWithLifecycle()
 
 
     Scaffold(topBar = {
@@ -65,10 +68,16 @@ fun SearchScreen(
             LazyColumn {
                 items(results.itemCount) { index ->
                     results[index]?.let { article ->
+                        val isBookmarked = bookmarkedIds.value.contains(article.id)
                         NewsCardItem(
                             newsArticle = article,
+                            isBookmarked = isBookmarked,
                             onClick = { onArticleClick(article) },
-                            onBookmarkClick = { viewModel.toggleBookmark(article) }
+                            onBookmarkClick = {
+                                val article = it.apply {
+                                    it.isBookmarked = bookmarkedIds.value.contains(it.id)
+                                }
+                                viewModel.toggleBookmark(article) }
                         )
                     }
                 }
