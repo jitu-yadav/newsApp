@@ -32,6 +32,4 @@ class NewsDetailViewModel @Inject constructor(
             toggleBookmarkUseCase(newsArticle)
         }
     }
-
-
 }

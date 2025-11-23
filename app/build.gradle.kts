@@ -97,4 +97,10 @@ dependencies {
 
     // Coroutines
     implementation(libs.bundles.coroutines)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.mockwebserver)
+    testImplementation(libs.truth)
+    testImplementation(libs.turbine)
 }
