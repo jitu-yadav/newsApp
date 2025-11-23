@@ -3,8 +3,8 @@ package com.stupid.newsapp.di
 import android.content.Context
 import androidx.room.Room
 import com.stupid.newsapp.common.Utils
-import com.stupid.newsapp.data.local.NewsDatabase
-import com.stupid.newsapp.data.local.ArticleDao
+import com.stupid.newsapp.data.local.BookmarkNewsDatabase
+import com.stupid.newsapp.data.local.NewsArticleDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,21 +14,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule {
+object BookmarkNewsDbModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): NewsDatabase {
+    fun provideDatabase(@ApplicationContext context: Context): BookmarkNewsDatabase {
         return Room.databaseBuilder(
             context,
-            NewsDatabase::class.java,
+            BookmarkNewsDatabase::class.java,
             Utils.DATABASE_NAME
         )
-        .fallbackToDestructiveMigration()
         .build()
     }
 
     @Provides
     @Singleton
-    fun provideArticleDao(database: NewsDatabase): ArticleDao = database.newsDao
+    fun provideArticleDao(database: BookmarkNewsDatabase): NewsArticleDao = database.newsDao()
 }

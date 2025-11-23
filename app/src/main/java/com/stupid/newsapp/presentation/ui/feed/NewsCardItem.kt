@@ -32,34 +32,34 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.stupid.newsapp.common.Utils
-import com.stupid.newsapp.domain.model.Article
+import com.stupid.newsapp.domain.model.NewsArticle
 
 @Composable
 fun NewsCardItem(
-    article: Article,
-    onClick: (article: Article) -> Unit,
-    onBookmarkClick: (article: Article) -> Unit
+    newsArticle: NewsArticle,
+    onClick: (newsArticle: NewsArticle) -> Unit,
+    onBookmarkClick: (newsArticle: NewsArticle) -> Unit
 ) {
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable { onClick(article) },
+            .clickable { onClick(newsArticle) },
 
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(12.dp)
 
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            article.urlToImage?.takeIf { it.isNotEmpty() }?.let { imageUrl ->
+            newsArticle.urlToImage?.takeIf { it.isNotEmpty() }?.let { imageUrl ->
                 Box {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl)
                             .crossfade(true)     // optional
                             .build(),
-                        contentDescription = article.title,
+                        contentDescription = newsArticle.title,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -69,11 +69,11 @@ fun NewsCardItem(
 
                     // BOOKMARK ICON OVER IMAGE (Top Right Corner)
                     IconButton(
-                        onClick = { onBookmarkClick(article) },
+                        onClick = { onBookmarkClick(newsArticle) },
                         modifier = Modifier.align(Alignment.TopEnd)
                     ) {
                         Icon(
-                            imageVector = if (article.isBookmarked)
+                            imageVector = if (newsArticle.isBookmarked)
                                 Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                             contentDescription = "Bookmark",
                             tint = Color.White
@@ -85,7 +85,7 @@ fun NewsCardItem(
 
             // Title
             Text(
-                text = article.title?: "",
+                text = newsArticle.title?: "",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 maxLines = 2,
@@ -95,7 +95,7 @@ fun NewsCardItem(
             Spacer(modifier = Modifier.height(6.dp))
 
             // Short Description (optional)
-            article.description?.takeIf { it.isNotBlank() }?.let {
+            newsArticle.description?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,
@@ -112,12 +112,12 @@ fun NewsCardItem(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = article.source ?: "",
+                    text = newsArticle.source ?: "",
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.DarkGray
                 )
                 Text(
-                    text = article.publishedAt?.let { Utils.formatDate(it) } ?: "",
+                    text = newsArticle.publishedAt?.let { Utils.formatDate(it) } ?: "",
                     style = MaterialTheme.typography.labelMedium,
                     color = Color.DarkGray
                 )

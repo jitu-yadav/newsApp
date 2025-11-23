@@ -8,17 +8,20 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ArticleDao {
+interface NewsArticleDao {
 
     @Query("SELECT * FROM bookmarks_articles")
-    fun getArticles(): Flow<List<ArticleEntity>>
+    fun getNewsArticles(): Flow<List<NewsEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertArticles(articles: List<ArticleEntity>)
+    suspend fun insertNewsArticles(articles: List<NewsEntity>)
 
     @Delete
-    suspend fun deleteArticle(article: ArticleEntity)
+    suspend fun deleteNewsArticle(article: NewsEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun bookmarkArticle(article: ArticleEntity)
+    suspend fun bookmarkNewsArticle(article: NewsEntity)
+
+    @Query("SELECT * FROM bookmarks_articles where id = :id")
+    fun getNewsArticle(id: String): Flow<NewsEntity>
 }

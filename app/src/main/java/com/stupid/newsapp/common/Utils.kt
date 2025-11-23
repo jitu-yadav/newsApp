@@ -9,6 +9,8 @@ object Utils {
     const val PAGE_SIZE = 20
     const val DEFAULT_COUNTRY = "us"
 
+    const val ARTICLE = "article"
+
 
     fun formatDate(dateString: String): String {
         return try {

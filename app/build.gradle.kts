@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.parcelize)
+    kotlin("kapt")
 }
 val newsApiKey: String = gradleLocalProperties(rootDir, providers).getProperty("NEWS_API_KEY") ?: ""
 
@@ -67,10 +68,12 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
+    kapt(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
-    implementation(libs.hilt.work)
-    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.work) {
+        exclude(group = "androidx.hilt", module = "hilt-compiler")
+    }
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
 
     // Networking
     implementation(libs.bundles.networking)
@@ -88,26 +91,22 @@ dependencies {
     // Coroutines
     implementation(libs.bundles.coroutines)
 
-    // WorkManager
-    implementation(libs.work.runtime.ktx)
+    // --- FIX START ---
+    // Force the specific JavaPoet version for both KAPT and KSP to resolve the conflict
+    // You don't need to declare this in libs.versions.toml if you just want a quick fix,
+    // otherwise add it there and use libs.javapoet.
+    val javapoet = "com.squareup:javapoet:1.13.0"
+    kapt(javapoet)
 
-    // DataStore
-    implementation(libs.datastore.preferences)
+}
+configurations.all {
+    resolutionStrategy {
+        force("com.squareup:javapoet:1.13.0")
+    }
+}
 
-    // Testing
-    testImplementation(libs.bundles.testing)
-
-    // Android Testing
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.navigation.testing)
-    androidTestImplementation(libs.work.testing)
-    androidTestImplementation(libs.hilt.android.testing)
-    kspAndroidTest(libs.hilt.android.compiler)
-
-    // Debug
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+// ADD THIS BLOCK to specifically force KSP configurations
+// This is the "nuclear option" for KSP conflicts
+configurations.filter { it.name.startsWith("ksp") }.forEach {
+    it.resolutionStrategy.force("com.squareup:javapoet:1.13.0")
 }

@@ -2,24 +2,24 @@ package com.stupid.newsapp.data.remote.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.stupid.newsapp.data.local.ArticleDao
+import com.stupid.newsapp.data.local.NewsArticleDao
 import com.stupid.newsapp.data.mapper.toDomain
-import com.stupid.newsapp.data.remote.NewsAPI
-import com.stupid.newsapp.domain.model.Article
+import com.stupid.newsapp.data.remote.NewsArticleAPI
+import com.stupid.newsapp.domain.model.NewsArticle
 import kotlinx.coroutines.flow.firstOrNull
 import java.lang.Exception
 import javax.inject.Inject
 
 class NewsPagingSource @Inject constructor(
-    private val api: NewsAPI,
-    private val dao: ArticleDao
-) : PagingSource<Int, Article>() {
+    private val api: NewsArticleAPI,
+    private val dao: NewsArticleDao
+) : PagingSource<Int, NewsArticle>() {
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NewsArticle> {
        val page = params.key ?: 1
         return try {
             val response = api.getTopHeadlines(page = page)
-            val bookMarks = dao.getArticles().firstOrNull().orEmpty().associateBy { it.id }
+            val bookMarks = dao.getNewsArticles().firstOrNull().orEmpty().associateBy { it.id }
             val articles = response.articles
                 .map { it.toDomain() }
                 .map { article ->
@@ -35,10 +35,9 @@ class NewsPagingSource @Inject constructor(
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
-        return state.anchorPosition?.let { anchor ->
-            state.closestPageToPosition(anchor)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchor)?.nextKey?.minus(1)
-        }
+    override fun getRefreshKey(state: PagingState<Int, NewsArticle>): Int? {
+        val anchorPos = state.anchorPosition ?: return null
+        val closestPage = state.closestPageToPosition(anchorPos) ?: return null
+        return closestPage.prevKey?.plus(1) ?: closestPage.nextKey?.minus(1)
     }
 }

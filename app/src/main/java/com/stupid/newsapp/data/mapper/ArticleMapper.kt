@@ -1,12 +1,13 @@
 package com.stupid.newsapp.data.mapper
 
-import com.stupid.newsapp.data.local.ArticleEntity
-import com.stupid.newsapp.data.remote.dto.ArticleDto
-import com.stupid.newsapp.domain.model.Article
+import com.stupid.newsapp.data.local.NewsEntity
+import com.stupid.newsapp.data.remote.dto.NewsArticleDto
+import com.stupid.newsapp.domain.model.NewsArticle
+import java.util.UUID
 
-fun ArticleDto.toDomain() : Article {
-    val id = url.hashCode().toString()
-    return Article(
+fun NewsArticleDto.toDomain() : NewsArticle {
+    val id = url?.hashCode()?.toString() ?: UUID.randomUUID().toString()
+    return NewsArticle(
         id = id,
         author = author,
         content = content,
@@ -19,8 +20,8 @@ fun ArticleDto.toDomain() : Article {
     )
 }
 
-fun Article.toEntity() : ArticleEntity {
-    return ArticleEntity(
+fun NewsArticle.toEntity() : NewsEntity {
+    return NewsEntity(
         id = id,
         author = author,
         content = content,
@@ -33,8 +34,8 @@ fun Article.toEntity() : ArticleEntity {
     )
 }
 
-fun ArticleEntity.toDomain() : Article {
-    return Article(
+fun NewsEntity.toDomain() : NewsArticle {
+    return NewsArticle(
         id = id,
         author = author,
         content = content,

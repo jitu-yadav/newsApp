@@ -1,6 +1,6 @@
 package com.stupid.newsapp.data.remote.dto
 
-data class ArticleDto(
+data class NewsArticleDto(
     val author: String?,
     val content: String?,
     val description: String?,

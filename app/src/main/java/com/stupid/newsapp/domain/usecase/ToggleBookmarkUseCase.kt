@@ -1,17 +1,17 @@
 package com.stupid.newsapp.domain.usecase
 
-import com.stupid.newsapp.domain.model.Article
-import com.stupid.newsapp.domain.repository.Repository
+import com.stupid.newsapp.domain.model.NewsArticle
+import com.stupid.newsapp.domain.repository.NewsRepository
 import javax.inject.Inject
 
 class ToggleBookmarkUseCase @Inject constructor(
-    private val repository: Repository
+    private val repo: NewsRepository
 ) {
-    suspend operator fun invoke(article: Article) {
-        if (article.isBookmarked) {
-            repository.unBookmarkArticle(article)
+    suspend operator fun invoke(newsArticle: NewsArticle) {
+        if (newsArticle.isBookmarked) {
+            repo.unBookmarkArticle(newsArticle)
         } else {
-            repository.bookmarkArticle(article)
+            repo.bookmarkArticle(newsArticle)
         }
     }
 }

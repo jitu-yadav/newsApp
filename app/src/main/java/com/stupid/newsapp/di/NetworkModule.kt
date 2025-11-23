@@ -1,10 +1,7 @@
 package com.stupid.newsapp.di
 
 import com.stupid.newsapp.common.Utils
-import com.stupid.newsapp.data.local.NewsDatabase
-import com.stupid.newsapp.data.remote.NewsAPI
-import com.stupid.newsapp.data.repository.NewsRepositoryImp
-import com.stupid.newsapp.domain.repository.Repository
+import com.stupid.newsapp.data.remote.NewsArticleAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,18 +16,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNewsApi(): NewsAPI {
+    fun provideNewsApi(): NewsArticleAPI {
         return Retrofit.Builder()
             .baseUrl(Utils.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(NewsAPI::class.java)
-    }
-
-    @Provides
-    @Singleton
-    @JvmSuppressWildcards
-    fun provideNewsRepository(api: NewsAPI, db: NewsDatabase): Repository {
-        return NewsRepositoryImp(api, db)
+            .create(NewsArticleAPI::class.java)
     }
 }

@@ -5,12 +5,12 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [ArticleEntity::class],
+    entities = [NewsEntity::class],
     version = 2,
     exportSchema = false
 )
-abstract class NewsDatabase : RoomDatabase() {
-    abstract val newsDao: ArticleDao
+abstract class BookmarkNewsDatabase : RoomDatabase() {
+    abstract fun newsDao(): NewsArticleDao
 }
 
 
